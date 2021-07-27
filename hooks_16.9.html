@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="./react_16.9/react.production.min.js"></script>
-    <script src="./react_16.9/react-dom.production.min.js"></script>
+<!--    <script src="./react_16.9/react.production.min.js"></script>-->
+    <script src="./react_16.9/react.development.js"></script>
+    <script src="./react_16.9/react-dom.development.js"></script>
     <script src="https://cdn.staticfile.org/prop-types/15.6.1/prop-types.js"></script>
     <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
 </head>
@@ -18,9 +19,13 @@
 <div id="cc"></div>
 <br /><br /><br />
 <div id="cc22"></div>
+<br /><br /><br />
+<div id="cc33"></div>
 <hr/>
 
 <div id="dd"></div>
+<div id="dd22"></div>
+<div id="dd33"></div>
 <hr/>
 
 <div id="ee"></div>
@@ -64,20 +69,52 @@
 
 
     /********     useContext    *************/
+    // 上下文是局部层面的全局变量
     // 步骤：
     // 使用 C = createContext( initial ) 创建上下文
     // 使用 < C.provider >圈定作用域
     // 在作用域内使用 useContext ( C ) 来使用上下文
-
-    // const myContext = React.useContext(null);
-    // function BBB() {
-    //
-    // }
-    //
-    // ReactDOM.render(
-    //     <BBB></BBB>,
-    //     document.getElementById("bb")
-    // );
+    const themes = {
+        light: {
+            foreground: "black",
+            background: "yellow"
+        },
+        dark: {
+            foreground: "white",
+            background: "blue"
+        }
+    };
+    // const MyContext = React.useContext(null);
+    const MyContext = React.createContext(themes.light);
+    function BBB() {
+        return (
+            <MyContext.Provider value={themes.dark}>
+                <ToolBar></ToolBar>
+            </MyContext.Provider>
+        );
+    }
+    function ToolBar(prop) {
+        const theme22 = React.useContext(MyContext);
+        console.log("useContext 原本的值：", theme22);
+        // 这里做了修改，子组件获取到的就是更改的值了
+        theme22.background = "green";
+        theme22.foreground = "red";
+        return (
+            <div>
+                <MyBtn></MyBtn>
+            </div>
+        );
+    }
+    function MyBtn() {
+        const theme = React.useContext(MyContext);
+        return (
+            <button style={{background: theme.background, color: theme.foreground}}>theme context</button>
+        );
+    }
+    ReactDOM.render(
+        <BBB></BBB>,
+        document.getElementById("bb")
+    );
 
 
     /********     useReducer    *************/
@@ -243,16 +280,96 @@
     // 将第四步的内容放到第三步的Context
     // 用Context.Provider将Context提供给所有组件
     // 各个组件用useContext 获取读写API
+    const storeAll = {
+        user: null,
+        books: null,
+        movies: null
+    };
+    const HisContext = React.createContext(null);
+    function myReducerCC(prevState, action) {
 
-    // ？？？？？？
+    }
+    function CCC_33() {
+
+
+        return (
+            <HisContext.Provider value={api}>
+                <User /><br />
+                <Books /><br />
+                <Movies />
+            </HisContext.Provider>
+        );
+    }
+    function User() {
+
+    }
+    ReactDOM.render(
+        <CCC_33></CCC_33>,
+        document.getElementById("cc33")
+    );
 
 
     /********     useEffect    *************/
+    // effect 是副作用的意思，实际上叫做 afterRender 更好一些 ，每次render 后运行，模仿生命周期函数
+    // 如果同时存在多个useEffect，会按照出现次序执行
 
+    function DDD() {
+        const [n, setN] = React.useState(0);
+        const myClick_D = function () {
+            setN( i => i + 1);
+        }
+        const [x, setX] = React.useState(0);
+        const myClick_D22 = function () {
+            setX( x => x + 1);
+        }
+
+        // 1、作为componentDidMount使用，[ ] (空数组)作第二个参数
+        const afterRender = React.useEffect;
+        afterRender(() => {
+            console.log("我这边是第一次渲染, 作为componentDidMount使用");
+        }, []);
+
+        // 2、作为componentDidUpdate使用，可指定依赖
+        const afterRender22 = React.useEffect;
+        afterRender22(() => {
+            console.log("监控 n，当 n 变化时，执行这句话 ");
+        }, [n]);
+
+        const afterRender33 = React.useEffect;
+        afterRender33(() => {
+            console.log("任何 state 变化时执行这句话");
+        });
+
+        // 3、作为componentWillUnmount使用，通过 return
+        React.useEffect(() => {
+            const id = setInterval(() => {
+                console.log("hi guy");
+            }, 1000);
+
+            return () => {
+                window.clearInterval(id);
+            }
+        }, []);
+
+        return (
+            <div>
+                n: {n} &nbsp;&nbsp;&nbsp;
+                <button onClick={myClick_D}>点击+1</button> <br /><br />
+                x: {x} &nbsp;&nbsp;&nbsp;
+                <button onClick={myClick_D22}>点击+1</button>
+            </div>
+        );
+    }
     ReactDOM.render(
         <DDD></DDD>,
         document.getElementById("dd")
     );
+
+    // useLayoutEffect ？？？？
+    // useEffect在浏览器渲染完成后执行，useLayoutEffect 在浏览器渲染前执行
+    // 为了用户体验，建议优先使用useEffect (优先渲染)
+
+
 
 </script>
 </body>
