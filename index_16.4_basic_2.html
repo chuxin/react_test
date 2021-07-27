@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>React 实例</title>
+    <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div id="gg"></div>
+<div id="gg22"></div>
+<div id="gg22-2"></div>
+<div id="gg33"></div>
+
+<div id="hh"></div>
+<div id="hh-11"></div>
+
+<div id="ii"></div>
+<div id="ii-22"></div>
+
+<div id="jj"></div>
+
+<div id="kk"></div>
+<div id="kk-11"></div>
+<div id="kk22"></div>
+<div id="kk33"></div>
+
+<div id="ll"></div>
+
+
+<script type="text/babel">
+    /*****    React 条件渲染   *******/
+    function UserGreeting (props) {
+        return <h3>用户，欢迎回来</h3>;
+    }
+    function GuestGreeting () {
+        return <h3>请先注册</h3>;
+    }
+    function Greeting (props) {
+        const isLoggedIn = props.isLoggedIn;
+        if (isLoggedIn) {
+            return <UserGreeting />;
+        }
+        return <GuestGreeting />;
+    }
+    ReactDOM.render(
+        <Greeting isLoggedIn={true} />,
+        document.getElementById("gg")
+    );
+
+    function LoginButton (props) {
+        console.log('loginBtn', props);
+        return (
+            <button onClick={props.onClick}>点击登录</button>           /* 这里是什么鬼，props.onClick */
+        );
+    }
+    function LogoutButton (props) {
+        console.log('logoutBtn', props);
+        return (
+            <button onClick={props.onClick}>退出登录</button>           /* 这里是什么鬼，props.onClick */
+        );
+    }
+    class LoginControl extends React.Component {
+        constructor (props) {
+            super(props);
+            this.state = {isLoggedIn: false};
+            this.handleLogin = this.handleLogin.bind(this);
+            this.handleLogout = this.handleLogout.bind(this);
+        }
+
+        handleLogin() {
+            this.setState({
+                isLoggedIn: true
+            });
+        }
+
+        handleLogout () {
+            this.setState({
+                isLoggedIn: false
+            });
+        }
+
+        render () {
+            const isLoggedIn = this.state.isLoggedIn;       // 这里竟然可以定义成 const
+            console.log(isLoggedIn);
+            let button = null;
+            if (isLoggedIn) {
+                button = <LogoutButton onClick={this.handleLogout}></LogoutButton>;
+            } else {
+                button = <LoginButton onClick={this.handleLogin}></LoginButton>;
+            }
+            return (
+                <div>
+                    <Greeting isLoggedIn={isLoggedIn} />
+                    {button}
+                </div>
+            );
+        }
+    }
+    ReactDOM.render(
+        <LoginControl/>,
+        document.getElementById("gg22")
+    );
+
+    // 自己实现的登入登出
+    function LogButton(props) {
+        return (
+            <button onClick={props.onClick}>{props.copying}</button>
+        );
+    }
+
+    class Top extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {myStatus: true};
+        }
+
+        handleClick() {
+            // 写法①
+            // this.setState({myStatus: !this.state.myStatus});
+            // 写法②
+            this.setState(function (prevState) {
+                return {myStatus: !prevState.myStatus};
+            });
+        }
+
+        render() {
+            var greetingCoping = "";
+            var btnCopying = "";
+            if (!this.state.myStatus) {
+                greetingCoping = "您好，您还未登录";
+                btnCopying = "点击登录";
+            } else {
+                greetingCoping = "您好，您已登录成功";
+                btnCopying = "退出登录";
+            }
+            return (
+                <div>
+                    <h3>{greetingCoping}</h3>
+                    <LogButton onClick={this.handleClick.bind(this)} copying={btnCopying}></LogButton>
+                </div>
+            );
+        }
+    }
+
+    ReactDOM.render(
+        <Top></Top>,
+        document.getElementById("gg22-2")
+    );
+
+    // && 运算符
+    // true && expression 总是返回 expression，而 false && expression 总是返回 false
+    // 三目运算符
+    function With (props) {
+        return (
+            <div>
+                <h3>&&与运算符</h3>
+                {
+                    props.unreadMessage.length > 0 &&
+                    <h4>您有{props.unreadMessage.length}条消息未读</h4>
+                }
+                <h3>三目运算符</h3>
+                {
+                    props.unreadMessage.length > 0 ? (<h4>true组件</h4>) : (<h4>false组件</h4>)
+                }
+            </div>
+        );
+    }
+    const messages = ["aa", "bb", "cc"];
+    ReactDOM.render(
+        <With unreadMessage={messages} />,
+        document.getElementById("gg33")
+    );
+
+    /*****    React 列表 & Keys   *******/
+    // 第一种写法
+    const numbers = [1, 2, 3, 4, 5];
+    // 写法①
+    // const listItems = numbers.map((num) => {
+    //     return <li>{num}</li>
+    // });
+    // 写法②
+    const listItems = numbers.map((num) =>
+        <li key={num.toString()}>{num}</li>
+    );
+    ReactDOM.render(
+        <div>{listItems}</div>,
+        document.getElementById("hh")
+    );
+
+    // 第二种写法
+    function NumberList(props) {
+        const numbers = props.numbers;
+        const listItems = numbers.map((num) =>
+            <li key={num.toString()}>
+                {num}
+            </li>
+        );
+        return (
+            <div>
+                <h3>{listItems}</h3>
+                <h4>{
+                    numbers.map( (num) =>
+                        <li key={num.toString()}>{num}</li>
+                    )
+                }</h4>
+            </div>
+        );
+    }
+
+    const numbers22 = [1, 2, 3, 4, 5];
+    console.log(numbers22[2].toString());
+    ReactDOM.render(
+        <NumberList numbers={numbers22}></NumberList>,
+        document.getElementById("hh-11")
+    );
+
+    /*****    React 组件 API   *******/
+    // 设置状态：setState
+    // 替换状态：replaceState
+    // 设置属性：setProps
+    // 替换属性：replaceProps
+    // 强制更新：forceUpdate
+    // 获取DOM节点：findDOMNode
+    // 判断组件挂载状态：isMounted
+        // isMounted 的方法在 ES6 中已经废除。主要的原因是它经过实际使用与测试可能不足以检测组件是否挂载，尤其是对于有一些异步的程序情况，以及逻辑上造成混乱。现在用以下方法代替：
+        // componentDidMount() {
+        //     this.mounted = true;
+        // }
+        // componentWillUnmount() {
+        //     this.mounted = false;
+        // }
+
+    /*****    React 组件生命周期   *******/
+    class Hello extends React.Component {
+        constructor(props22) {
+            super(props22);
+            this.state = {opacity: 1};
+        }
+
+        componentDidMount() {
+            setInterval(function () {
+                var tmp = this.state.opacity;
+                if (tmp <= 0.1) {
+                    tmp = 1;
+                } else {
+                    tmp -= 0.1;
+                }
+                this.setState({opacity: tmp});
+            }.bind(this), 200);
+        }
+
+        render() {
+            return (
+                <span style={{opacity: this.state.opacity}}>Hello {this.props.name}</span>
+            );
+        }
+    }
+
+    ReactDOM.render(
+        <Hello name="world"></Hello>,
+        document.getElementById("ii")
+    );
+
+
+    class Button extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {data: 0};
+            this.setNumber = this.setNumber.bind(this);
+        }
+
+        setNumber() {
+            this.setState({data: this.state.data+1});
+            // this.setState(function (prevState) {
+            //     var newData = prevState.data + 1;
+            //     return {data: newData};
+            // });
+        }
+
+        render() {
+            return (
+                <div>
+                    <button onClick={this.setNumber}>点击我+1</button>
+                    <MySpan value={this.state.data}></MySpan>
+                </div>
+            );
+        }
+    }
+    class MySpan extends React.Component {
+        componentWillMount() {
+            console.log('Component will mount!')
+        }
+
+        componentDidMount() {
+            console.log('Component did mount!')
+        }
+
+        componentWillReceiveProps(newProps) {
+            console.log('Component will receive new props!')
+        }
+
+        shouldComponentUpdate(newProps, newState) {
+            return true;
+        }
+
+        componentWillUpdate(nextProps, nextState) {
+            console.log('Component will update!');
+        }
+
+        componentDidUpdate(prevProps, prevState) {
+            console.log('Component did update!');
+        }
+
+        componentWillUnmont() {
+            console.log('Component will unmount!')
+        }
+
+        render() {
+            return (
+                <span> 值：{this.props.value}</span>
+            );
+        }
+    }
+
+    ReactDOM.render(
+        <div>
+            <Button/>
+        </div>,
+        document.getElementById("ii-22")
+    );
+
+
+    /*****    React AJAX   *******/
+    // React 组件的数据可以通过 componentDidMount 方法中的 Ajax 来获取，当从服务端获取数据时可以将数据存储在 state 中，再用 this.setState 方法重新渲染 UI。
+    // 当使用异步加载数据时，在组件卸载前使用 componentWillUnmount 来取消未完成的请求。
+    class GetRemote extends React.Component {
+        constructor(props) {
+            super(props);
+            // 这里真是奇葩， state.list 定义几个， render() 才能用几个 ？？？？？？？？
+            this.state = {id: '', city: '', date: '', list: [
+                {date: '', icon1: '', icon2: '', temp: '', w: '', weather: '', wind: ''},
+                {date: '', icon1: '', icon2: '', temp: '', w: '', weather: '', wind: ''}]};
+        }
+
+        componentDidMount() {
+            this.serverRequest = $.ajax({
+                url:this.props.source,
+                type:'GET',
+                dataType:'JSONP',  // 处理Ajax跨域问题
+                success: function(response){
+                    console.log(response);
+                    this.setState({
+                        id: response.id,
+                        city: response.city,
+                        date: response.date,
+                        list: response.list
+                    });
+                }.bind(this)
+            });
+        }
+
+        componentWillUnmount() {
+            this.serverRequest.abort();
+        }
+
+        render () {
+            var tmp = this.state.list;
+            console.log('我是对象', tmp[1].date);
+
+            return (
+                <div>
+                    <h3>天气预报信息：</h3>
+                    <pre>
+                        id: {this.state.id} &nbsp;&nbsp;
+                        city: {this.state.city} &nbsp;&nbsp;
+                        date: {this.state.date}  &nbsp;&nbsp;
+                    </pre>
+                </div>
+            );
+        }
+    }
+
+    ReactDOM.render(
+        <GetRemote source="https://api.asilu.com/weather/weather?id=101010100" />,
+        document.getElementById("jj")
+    );
+
+
+    /*****    React 表单与事件   *******/
+    // input 输入框例子
+    class InputBox extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {data: ""};
+            this.handleChange = this.handleChange.bind(this);
+        }
+
+        handleChange(event) {
+            this.setState({data: event.target.value});
+        }
+
+        render () {
+            return (
+                <div>
+                    <input onChange={this.handleChange} />
+                    <span>{this.state.data}</span>
+                    <br /><br />
+                </div>
+            );
+        }
+    }
+    ReactDOM.render(
+        <InputBox></InputBox>,
+        document.getElementById("kk")
+    );
+
+    // input 输入框例子  子组件实现
+    /* // 写法①
+    function MyContent (props) {
+        return (
+            <div>
+                <input type="text" value={props.value} onChange={props.myEvent} />
+                <span>{props.value}</span>
+            </div>
+        );
+    }
+    */
+    // 写法②
+    class MyContent extends React.Component {
+        render () {
+            return (
+                <div>
+                    <input type="text" value={this.props.value} onChange={this.props.myEvent} />
+                    <span>{this.props.value}</span>
+                    <br /><br />
+                </div>
+            );
+        }
+    }
+    class MyDiv extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {data: ''};
+            this.handleChange = this.handleChange.bind(this);
+        }
+
+        handleChange(event) {
+            this.setState({data: event.target.value});
+        }
+
+        render () {
+            return (
+                <MyContent value={this.state.data} myEvent={this.handleChange}></MyContent>
+            );
+        }
+    }
+    ReactDOM.render(
+        <MyDiv></MyDiv>,
+        document.getElementById("kk-11")
+    );
+
+    // Select 下拉框实现
+    class MyForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {data: ''};
+            this.handleChange = this.handleChange.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+
+        handleChange(event) {
+            this.setState({data: event.target.value});
+        }
+
+        handleSubmit(event) {
+            console.log("不允许提交表单，值为：" + this.state.data);
+            event.preventDefault();
+        }
+
+        render () {
+            return (
+                <form>
+                    <label>选择你喜欢的网站<select value={this.state.data} onChange={this.handleChange}>
+                        <option value="gg">Google</option>
+                        <option value="bd">Baidu</option>
+                        <option value="sg">sougou</option>
+                        <option value="bg">bingo</option>
+                    </select></label>
+                    <input type="submit" value="提交" onClick={this.handleSubmit} />
+                    <br /><br /><br />
+                </form>
+            );
+        }
+    }
+    ReactDOM.render(
+        <MyForm></MyForm>,
+        document.getElementById("kk22")
+    );
+
+    // 多个 input 情况
+    class MyForm22 extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {checkVal: false, numberVal: ''};
+            this.handleChange = this.handleChange.bind(this);
+        }
+
+        handleChange(event) {
+            const name = event.target.name;
+            const value = event.target.name === "checkVal" ? event.target.checked : event.target.value;
+            this.setState({name: value});
+            console.log({name: value});
+        }
+
+        render () {
+            return (
+                <div>
+                    check框：<input name="checkVal" type="checkbox" checked={this.state.checked} onChange={this.handleChange} />
+                    number框：<input name="numberVal" type="number" value={this.state.value} onChange={this.handleChange} />
+                    <br /><br /><br />
+                </div>
+            );
+        }
+    }
+    ReactDOM.render(
+        <MyForm22></MyForm22>,
+        document.getElementById("kk33")
+    );
+
+
+    /*****    React Refs   *******/
+    class MyRef extends React.Component {
+        constructor(props) {
+            super(props);
+            this.handleClick = this.handleClick.bind(this);
+            this.myInputDom = React.createRef();
+        }
+
+        handleClick() {
+            const myInputDom = this.myInputDom;
+            myInputDom.current.focus();
+            alert("输入框内容：" + myInputDom.current.value + " 输入框尺寸：" + myInputDom.current.getBoundingClientRect());
+            console.log("myInputDom.getBoundingClientRect", myInputDom.current.getBoundingClientRect());
+        }
+
+        render () {
+            return (
+                <div>
+                    <input type="text" ref={this.myInputDom} />
+                    <button onClick={this.handleClick}>点击我获取焦点</button>
+                    <br /><br /><br />
+                </div>
+            );
+        }
+    }
+    ReactDOM.render(
+        <MyRef></MyRef>,
+        document.getElementById("ll")
+    );
+
+</script>
+</body>
+</html>

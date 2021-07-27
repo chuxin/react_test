@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./react_16.9/react.production.min.js"></script>
+    <script src="./react_16.9/react-dom.production.min.js"></script>
+    <script src="https://cdn.staticfile.org/prop-types/15.6.1/prop-types.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+<body>
+<div id="aa"></div>
+
+<div id="useEffect"></div>
+<div id="useEffect_test"></div>
+
+<div id="useMemo"></div>
+
+<div id="useRef"></div>
+
+<script type="text/babel">
+    var tt = "paymentInformation.bankDetails.accountHolder.name";
+    console.log(tt.endsWith("2name"));
+
+    const aaStyle = {
+        backgroundColor: "blue"
+    };
+
+    const bbStyle = {
+        backgroundColor: "yellow"
+    };
+
+    const BeneficiaryContext = ({path, ...xxx}) => {
+        console.log(path);
+        console.log(xxx);
+        console.log({...xxx});
+        console.log(xxx.path === undefined);
+
+        var mm = xxx.label;
+        delete xxx.label;
+        console.log(xxx);
+        console.log(mm);
+
+        // const onChange = (value, myDom, myDom22) => {
+        //     console.log("33333  schemaNamespace: ");
+        //     console.log(value);
+        //     console.log(myDom);
+        //     if (myDom.current !== null) {
+        //         myDom.current.innerHTML = 'goddamn shit';
+        //     }
+        //     if (myDom22.current === null) {
+        //         console.log(myDom22);
+        //     }
+        // };
+        const onChange = (value: string | boolean, spanDom: string | null, spanDom22: string | null) => {
+            console.log("33333  schemaNamespace: ");
+            console.log(value);
+            if (spanDom && spanDom.current !== null) {
+                spanDom.current.innerHTML = 'goddamn shit';
+            }
+            if (spanDom22 && spanDom22.current === null) {
+                console.log(spanDom22);
+            }
+        };
+
+        const combinedProps = {
+            name: 'louis',
+            onChange,
+            value: 998
+        };
+
+        return (
+            <TextField {...combinedProps} />
+        );
+    };
+
+    const TextField = ({ onChange, ...rest }) => {
+        const spanDom = React.useRef(null);
+        const spanDom22 = React.useRef(null);
+        const [ count, setCount ] = React.useState(1);
+
+        const handleChange = value => {
+            onChange(value, spanDom);
+            setCount(2);
+        };
+
+
+
+        console.log("textInput 111 看下面：");
+        console.log({...rest});
+
+        return (<div>
+            <span ref={spanDom} style={count === 1 ? aaStyle : bbStyle}>44444</span>
+            <input {...rest} onChange={handleChange} />
+        </div>);
+    };
+
+    const element = document.getElementById(
+        "aa"
+    );
+
+    const clientAccount = element.dataset.clientAccount
+        ? element.dataset.clientAccount
+        : "";
+
+    const companyName = element.dataset.companyName
+        ? element.dataset.companyName
+        : "";
+
+    ReactDOM.render(
+        <BeneficiaryContext
+            path={'holdername'}
+            clientAccountNumber={clientAccount}
+            companyName={companyName}
+            label={'wo shi lll'}
+            lala={'zzzzzz'}
+        />,
+        element
+    );
+
+    // useEffect
+    // ReactDOM.render(
+    //     <App11
+    //     />,
+    //     document.getElementById("useEffect")
+    // );
+    //
+    // function App11() {
+    //     const [count, setCount] = React.useState(1);
+    //     const xx = {aa:11};
+    //
+    //     React.useEffect(() => {
+    //         document.getElementById("useEffect_test").innerHTML = count;
+    //         console.log(count);
+    //         console.log(xx.aa);
+    //     }, [count, xx]);
+    //
+    //     setInterval(function () {
+    //         xx.aa += 1;
+    //     }, 2000);
+    //
+    //     return (
+    //         <div>
+    //             页面名称： {count}
+    //             <button onClick={() => {setCount (count + 1)}}>点我</button>
+    //         </div>
+    //     );
+    // }
+
+    const user = {"value": 4444};
+    const nameTipRef = {"value": 123, "innerhtml":555, "abc": 998};
+    Object.defineProperty(user, "nameTipRef", {
+        value:nameTipRef
+    });
+    console.log(user);
+</script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./react_16.9/react.production.min.js"></script>
+    <script src="./react_16.9/react-dom.production.min.js"></script>
+    <script src="https://cdn.staticfile.org/prop-types/15.6.1/prop-types.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+<body>
+<div id="aa"></div>
+<hr/>
+
+<div id="bb"></div>
+<hr/>
+
+<div id="cc"></div>
+<br /><br /><br />
+<div id="cc22"></div>
+<hr/>
+
+<div id="dd"></div>
+<hr/>
+
+<div id="ee"></div>
+<hr/>
+
+<div id="ff"></div>
+<hr/>
+
+<script type="text/babel">
+    /********     useState    *************/
+    // 不可局部更新。如果state是一个对象，不会帮我们合并属性
+    // 地址要变。setState(obj)，如果obj地址不变，那么 React 就认为数据没有变化
+    function AAA() {
+        const [n, setN] = React.useState(0);
+        const [user, setUser] = React.useState({name: 'F'});
+        const [val, setVal] = React.useState(() => {
+            return {age: 26}
+        });
+
+        // 总结：尽可能使用函数的写法
+        const myClickEvent = () => {
+            setN(n + 1);        // 这个没效果，不确定有没有执行了
+            setN(n + 2);        // 这个执行了
+
+            // 改写成函数写法
+            setN( x => x + 3 ); // 这个执行了
+            setN( x => x + 4 ); // 这个执行了
+        }
+
+        return (
+            <div className="AAA">
+                <h3>n: {n}</h3>
+                <button onClick={myClickEvent}>累加n</button>
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <AAA></AAA>,
+        document.getElementById("aa")
+    );
+
+
+    /********     useContext    *************/
+    // 步骤：
+    // 使用 C = createContext( initial ) 创建上下文
+    // 使用 < C.provider >圈定作用域
+    // 在作用域内使用 useContext ( C ) 来使用上下文
+
+    // const myContext = React.useContext(null);
+    // function BBB() {
+    //
+    // }
+    //
+    // ReactDOM.render(
+    //     <BBB></BBB>,
+    //     document.getElementById("bb")
+    // );
+
+
+    /********     useReducer    *************/
+    // 步骤：
+    // 创建初始值 initialState
+    // 创建所有操作reducer(state,action)
+    // 传给useReducer，得到读和写API
+    // 调用写 ({type:'操作类型'})
+    //
+    // 总得来说useReducer是useState的复杂版
+
+    // 例子 ①  基础
+    const initial = {
+        n: 0
+    }
+    const myReducerFunc = (prevState, action) => {
+        if (action.type === "add_11") {
+            return {n: prevState.n + action.number};
+        } else if (action.type === "add_22") {
+            return {n: prevState.n + action.number};
+        } else {
+            throw new Error("unknow type 哈哈");
+        }
+    }
+    const myReducerFunc22 = (prevState22, action) => {
+        if (action.type === "add_11") {
+            return {xx: prevState22.xx + action.number};
+        } else if (action.type === "add_22") {
+            return {xx: prevState22.xx + action.number};
+        } else {
+            console.log("有错误");
+        }
+    }
+    function CCC() {
+        const [state, dispatch_11] = React.useReducer(myReducerFunc, initial);
+        const {n} = state;
+        const myClick11 = () => {
+            dispatch_11 ({
+                type: "add_11",
+                number: 1
+            });
+        }
+        const myClick22 = () => {
+            dispatch_11 ({
+                type: "add_22",
+                number: 2
+            });
+        }
+        const [state22, dispatch] = React.useReducer(myReducerFunc22, {xx: 0, yy: 3});
+        const myClick33 = () => {
+            dispatch ({
+                type: "add_11",
+                number: 1
+            });
+        }
+        const myClick44 = () => {
+            dispatch ({
+                type: "add_11",
+                number: 2
+            });
+            console.log(state22);   // Object { xx: 14 }   对象属性 yy，消失了 ？？？
+        }
+
+        return (
+            <div>
+                <h3>n: {n}</h3>
+                <button onClick={myClick11}>点击+1</button>&nbsp;&nbsp;
+                <button onClick={myClick22}>点击+2</button>
+                <h3>state22: {state22.xx}</h3>
+                <button onClick={myClick33}>点击+1</button>&nbsp;&nbsp;
+                <button onClick={myClick44}>点击+2</button>
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <CCC></CCC>,
+        document.getElementById("cc")
+    );
+
+    // 例子 ② form表单
+    const aaa = {
+        name: "",
+        age: 18,
+        nationality: "汉族"
+    };
+    const bbb = {
+        name: "啊啊啊",
+        nationality: ""
+    };
+    console.log({...aaa, ...bbb});
+
+    const initial_22 = {
+        name: "",
+        age: 18,
+        nationality: "汉族"
+    };
+    function myReducer_lala (prevState, action) {
+        switch (action.type) {
+            case "patch":
+                return {...prevState, ...action.formData};
+            case "reset":
+                return initial_22;
+            default:
+                throw new Error("错误。。。");
+        }
+    }
+    function CCC_22() {
+        const [formData, myDispatch] = React.useReducer(myReducer_lala, initial_22);
+        const mySubmit = () => {
+
+        }
+        const myPatch = (key22, value22) => {
+            myDispatch({
+                type: "patch",
+                formData: {[key22]: value22}        // 注意这里的写法，对象属性的赋值 ！！！
+            })
+        }
+        const myReset = () => {
+            myDispatch({
+                type: "reset"
+            });
+        }
+
+        return (
+            <form onSubmit={mySubmit} onReset={myReset}>
+                <div>
+                    <label>姓名：<input type="text" value={formData.name}
+                                     onInput={(e) => myDispatch ({
+                                         type: "patch",
+                                         formData: {name: e.target.value}
+                                     })} /></label>
+                </div>
+                <div>
+                    <label>年龄：<input type="text" value={formData.age}
+                                    onInput={(e) => myPatch("age", e.target.value)} /></label>
+                </div>
+                <div>
+                    <label>宗教：<input type="text" value={formData.nationality}
+                                     onInput={(e) => myDispatch ({
+                                         type: "patch",
+                                         formData: {nationality: e.target.value}
+                                     }) } /></label>
+                </div>
+                <div>
+                    <button type="submit">提交</button>
+                    <button type="reset">重置</button>
+                </div>
+                <h3>{JSON.stringify(formData)}</h3>
+            </form>
+        );
+    }
+    ReactDOM.render(
+        <CCC_22></CCC_22>,
+        document.getElementById("cc22")
+    );
+
+    // 例子 ③     如何使用 useReducer 代替 Redux
+    // 步骤：
+    // 将数据集中在一个store对象
+    // 将所有操作集中在reducer
+    // 创建一个Context
+    // 创建对数据的读写API
+    // 将第四步的内容放到第三步的Context
+    // 用Context.Provider将Context提供给所有组件
+    // 各个组件用useContext 获取读写API
+
+    // ？？？？？？
+
+
+    /********     useEffect    *************/
+
+    ReactDOM.render(
+        <DDD></DDD>,
+        document.getElementById("dd")
+    );
+
+</script>
+</body>
+</html>

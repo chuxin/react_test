@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.staticfile.org/react/15.4.2/react.min.js"></script>
+    <script src="https://cdn.staticfile.org/react/15.4.2/react-dom.min.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.22.1/babel.min.js"></script>
+</head>
+<body>
+<div id="ee"></div>
+<script type="text/babel">
+    var title = '我是react版本15.4';
+    var MyTitle = React.createClass({
+        propTypes: {
+            title: React.PropTypes.string.isRequired,
+        },
+        render: function () {
+            return <h3>{this.props.title}</h3>
+        }
+    });
+    ReactDOM.render(
+        <MyTitle title={title}></MyTitle>,
+        document.getElementById('ee')
+    );
+</script>
+</body>
+</html>

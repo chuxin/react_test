@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.staticfile.org/prop-types/15.6.1/prop-types.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+<body>
+<div id="aa"></div>
+<hr/>
+
+<div id="bb"></div>
+<div id="bb22"></div>
+<div id="bb33"></div>
+<div id="bb44"></div>
+<hr/>
+
+<div id="cc"></div>
+<div id="cc22"></div>
+<div id="cc33"></div>
+<div id="cc44"></div>
+<hr/>
+
+<div id="dd"></div>
+<div id="dd22"></div>
+<div id="dd33"></div>
+<div id="dd44"></div>
+<hr/>
+
+<div id="ee"></div>
+<div id="ee22"></div>
+<div id="ee33"></div>
+
+<div id="ff"></div>
+
+<script type="text/babel">
+    /***    第一个demo    ***/
+    const com11 = <h1>你好, louis </h1>;
+    // const com11 = '<h4>6666</h4>';   // 页面输出字符串
+    // const com11 = "<h4>7777</h4>";   // 页面输出字符串
+    ReactDOM.render(
+        com11,
+        document.getElementById('aa')
+    );
+
+    /***    元素渲染 && 组件 && 复合组件    ***/
+    function tick() {
+        const element = (
+            <div>
+                <h1>我是BB，方法①</h1>
+                <h2>现在是 {new Date().toLocaleTimeString()}</h2>
+            </div>
+        );
+        ReactDOM.render(
+            element,
+            document.getElementById('bb')
+        );
+    }
+
+    setInterval(tick, 1000);
+
+    // 使用函数自定义了一个组件 TempDom22
+    // 注意：组件名必须是大写开头
+    function TempDom22(props) {
+        return (
+            <div>
+                <h1>我是BB22，方法②</h1>
+                <h2>现在是 {props.date.toLocaleTimeString()}</h2>
+            </div>
+        );
+    }
+
+    function tick22() {
+        ReactDOM.render(
+            <TempDom22 date={new Date()}/>,    // date 属性，在组件内部通过 props.date 来获取
+            document.getElementById('bb22')
+        );
+    }
+
+    setInterval(tick22, 1000);
+
+    // 使用 ES6 class 来定义一个组件 TempDom22
+    // 注意：自定义的 React 类名以大写字母开头
+    class TempDom33 extends React.Component {
+        render() {
+            return (
+                <div>
+                    <h1>我是BB33，方法③</h1>
+                    <h2>现在是 {this.props.date.toLocaleTimeString()}</h2>
+                </div>
+            );
+        }
+    }
+
+    function tick33() {
+        ReactDOM.render(
+            <TempDom33 date={new Date()}/>,
+            document.getElementById('bb33')
+        );
+    }
+
+    setInterval(tick33, 1000);
+
+    function CustomAA(props) {
+        return (
+            <span>{props.name}<br/></span>
+        );
+    }
+
+    function CustomBB(props) {
+        return (
+            <span>{props.age}<br/></span>
+        );
+    }
+
+    function CustomCC(props) {
+        return (
+            <span>{props.sex}<br/></span>
+        );
+    }
+
+    function App() {
+        return (
+            <div>
+                <CustomAA name="my name is louis"></CustomAA>
+                <CustomBB age="I am 30"></CustomBB>
+                <CustomCC sex="male"></CustomCC>
+            </div>
+        );
+    }
+
+    ReactDOM.render(
+        <App/>,
+        document.getElementById('bb44')
+    );
+
+    /***    JSX    ***/
+        // 由于 JSX 就是 JavaScript，一些标识符像 class 和 for 不建议作为 XML 属性名。
+        // 作为替代，React DOM 使用 className 和 htmlFor 来做对应的属性。
+    var cc11 = <h3 className="foo">我是JSX</h3>
+    ReactDOM.render(
+        cc11,
+        document.getElementById('cc')
+    );
+
+    var cc22 = {
+        fontSize: 16,
+        color: '#ff0000'
+    };
+    var cc22_arr = [
+        <h4 key='1'>我是数组值11</h4>,
+        <h5 key='2'>我是数组值22</h5>
+    ];
+    ReactDOM.render(
+        <div>
+            { /* 加点注释 */}
+            <h6 style={cc22}>我是JSX 22</h6>
+            <h3>这里有个计算值： {1 + 1}</h3>
+            <h3>这里有个 ternary conditional operator： {1 === 1 ? 'true' : 'false'}</h3>
+            <p data-myattribute="someValue">我加了自定义标签属性</p>
+            <span>{cc22_arr}</span>
+        </div>,
+        document.getElementById('cc22')
+    );
+
+    /***    React State 状态    ***/
+    // 将生命周期方法添加到类中
+    // 数据自顶向下流动
+    function FormattedDate(props) {
+        return <h2>现在是 {props.my_date.toLocaleTimeString()}</h2>;
+    }
+
+    class TempDD extends React.Component {
+        constructor(props) {
+            super(props);
+            console.log(1111);
+            // 初始化 state，只执行一次
+            this.state = {my_date: new Date()}
+        }
+
+        // 在组件输出到 DOM 后会执行 componentDidMount() 钩子
+        componentDidMount() {
+            console.log(4444);
+            this.timerId = setInterval(() => this.tick(), 3000);
+        }
+
+        componentWillUnmount() {
+            console.log(3333);
+            clearInterval(this.timerId);
+        }
+
+        tick() {
+            console.log(2222);
+            // 更新 state
+            this.setState({
+                my_date: new Date()
+            });
+        }
+
+        render() {
+            return (
+                <div>
+                    <FormattedDate my_date={this.state.my_date}></FormattedDate>
+                </div>
+            );
+        }
+    }
+
+    ReactDOM.render(
+        // 以下实例中每个 Clock 组件都建立了自己的定时器并且独立更新
+        <div>
+            <TempDD></TempDD>
+            <TempDD></TempDD>
+            <TempDD></TempDD>
+        </div>,
+        document.getElementById('dd')
+    );
+
+    /***    React props    ***/
+    class HelloMessage extends React.Component {
+        render() {
+            return (
+                <h3>hello, {this.props.name}</h3>
+            );
+        }
+    }
+
+    HelloMessage.defaultProps = {
+        name: 'Runoob'
+    };
+    const element = <HelloMessage/>;
+    ReactDOM.render(
+        element,
+        document.getElementById('ee')
+    );
+
+    // state 和 props 组合使用
+    class WebSite extends React.Component {
+        constructor() {
+            super();
+            this.state = {
+                name: '我的名字',
+                site: 'http://www.baidu.com'
+            };
+        }
+
+        render() {
+            return (
+                <div>
+                    <Name name={this.state.name}></Name>
+                    <Link site={this.state.site}></Link>
+                </div>
+            );
+        }
+    }
+
+    class Name extends React.Component {
+        render() {
+            return (
+                <h3>{this.props.name}</h3>
+            );
+        }
+    }
+
+    class Link extends React.Component {
+        render() {
+            return (
+                <a href={this.props.site}>{this.props.site}</a>
+            );
+        }
+    }
+
+    ReactDOM.render(
+        <WebSite></WebSite>,
+        document.getElementById("ee22")
+    );
+
+    // Props 验证  React 16.4版本
+    var title = "props验证 16.4 version";
+
+    class MyTitle extends React.Component {
+        render() {
+            return (
+                <h3>hello, {this.props.title}</h3>
+            );
+        }
+    }
+
+    MyTitle.propTypes = {
+        title: PropTypes.string
+    };
+    ReactDOM.render(
+        <MyTitle title={title}></MyTitle>,
+        document.getElementById('ee33')
+    );
+
+    // Props 验证  React 15.4版本   参加 index_15.4.html
+
+    /***    React 事件处理    ***/
+    class Toggle extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {isToggleOn: true};
+        // this.handleClick = this.handleClick.bind(this);
+      }
+
+      handleClick() {
+        this.setState();
+      }
+
+      render() {
+        return(
+          <button onClick="{this.handleClick}">
+            {this.state.isToggleOn ? 'ON' : 'OFF'}
+          </button>
+        );
+      }
+    }
+    ReactDOM.render(
+        <Toggle />,
+        document.getElementById('ff')
+    );
+
+
+</script>
+<script type="text/babel" src="aa.js"></script>
+</body>
+</html>
