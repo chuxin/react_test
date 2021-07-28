@@ -29,9 +29,17 @@
 <hr/>
 
 <div id="ee"></div>
+<br /><br /><br />
+<div id="ee22"></div>
 <hr/>
 
 <div id="ff"></div>
+<hr/>
+
+<div id="gg"></div>
+<hr/>
+
+<div id="hh"></div>
 <hr/>
 
 <script type="text/babel">
@@ -394,7 +402,7 @@
         // 3、作为componentWillUnmount使用，通过 return
         React.useEffect(() => {
             const id = setInterval(() => {
-                console.log("hi guy");
+                // console.log("hi guy");
             }, 1000);
 
             return () => {
@@ -421,19 +429,119 @@
     // 为了用户体验，建议优先使用useEffect (优先渲染)
 
 
+    /********     memo    *************/
+    // React.PureComponent 是银               React.memo(…) 是金。
+    // React.PureComponent 是 ES6 类的组件     React.memo(...) 是函数组件
+    // React.PureComponent 优化 ES6 类组件中的重新渲染     React.memo(...) 优化函数组件中的重新渲染
+
+    // 例子①
+    // Child组件 正常调用，没有用到 React.memo 。 页面任何改动都会渲染
+    function Child(props) {
+        console.log(props.name + " 组件 页面任何改动，我都执行了");
+        return (
+            <div>n: {props.n}</div>
+        );
+    }
+    // 例子②
+    // Child22组件，用到 React.memo 。  m的值发生变化，才渲染
+    // 注意：React.memo 要写在 组件function 的外面，如果写在里面，就一直会执行，不起效果  ！！！！
+    let TestC = props => {
+        console.log(props.name + " 组件 执行了");
+        return (
+            <div>m: {props.m}</div>
+        );
+    }
+    const Child22 = React.memo(
+        TestC,
+        (prevProps, nextProps) => {
+            return prevProps.m === nextProps.m;
+        }
+    );
+    // 例子③
+    // MemodComponent组件， 用到 React.memo 。 content的值发生变化，才渲染
+    // 注意下面 useState 的特殊写法
+    const MemodComponent = React.memo(
+        props => {
+            console.log("TEST", props.content);
+            return <div>{props.content}</div>;
+        },
+        (prevProps, nextProps) => {
+            return prevProps.content === nextProps.content;
+        }
+    );
+    function EEE() {
+        const [n, setN] = React.useState(0);
+        const [m, setM] = React.useState(0);
+        const myClick = () => {
+            setN( n11 => n11+1 );
+        }
+        const myClickMM = () => {
+            setM( m11 => m11+1 );
+        }
+        // 注意这里， 初始化时没有定义变量
+        const [, setState] = React.useState();
+
+        return (
+            <div>
+                <button onClick={myClick}>update n: {n}</button> &nbsp;&nbsp;
+                <button onClick={myClickMM}>update m: {m}</button>
+                <Child n={n} name="Child"></Child>
+                <Child22 m={m} name="Child22"></Child22>
+                <button onClick={() => setState( Math.random())}>force update</button>
+                <MemodComponent content="content11" />
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <EEE></EEE>,
+        document.getElementById("ee")
+    );
+
+
     /********     useMemo    *************/
-    
+    // useMemo 也支持传入第二个参数，用法和 useEffect 类似
+    // 不传数组，每次更新都会重新计算
+    // 空数组，只会计算一次
+    // 依赖对应的值，当对应的值发生变化时，才会重新计算(可以依赖另外一个 useMemo 返回的值)
+    // 注意：useMemo 会在渲染的时候执行，而不是渲染之后执行，这一点和 useEffect 有区别，所以 useMemo 不建议有 副作用相关的逻辑
 
+    function FFF() {
+        const [count, setCount] = React.useState(0);
+        const [count22, setCount22] = React.useState(0);
+        const obj = {i: 0};
+        // 只要 count 一更新，下面的函数就会执行
+        const add = React.useMemo(() => {
+            console.log(obj);   // 这里obj的值永远是 {i: 0}，你得按照react的规则来操作数据， react自身有一套保存数据/操作数据的方法
+            obj.i += 1;
+            return count + 1;
+        }, [count]);
 
+        return (
+            <div>
+                <button onClick={() => setCount(count + 1)}>点击我</button><br />
+                <button onClick={() => setCount22(count22 + 1)}>点击我22</button><br />
+                <span>count点击次数：{count}</span><br />
+                <span>count22点击次数：{count22}</span><br />
+                <span>监控count后，useMemo执行次数：{add}</span><br />
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <FFF></FFF>,
+        document.getElementById("ff")
+    );
 
 
     /********     useCallback    *************/
+    // useCallback 和 useMemo 都可缓存函数的引用或值，但从更细的使用角度来说，useCallback 缓存函数的引用，useMemo 缓存计算数据的值。
 
 
     /********     useRef    *************/
 
 
     /********     自定义 hook    *************/
+
+
 
 </script>
 </body>
