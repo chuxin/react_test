@@ -537,9 +537,59 @@
 
 
     /********     useRef    *************/
+    // 如果你需要一个值，在组件不断 render 时保持不变
+    // 初始化:const count = useRef ( 0 )   读取 : count.current
+    // 为什么要 current ? 为了保证两次的 useRef 是同一个值(只有引用能做到)
+
+    // 由于 useRef 可以用来引用 DOM 对象，也可以用来引用普通对象，但是 props 不包括 ref，所以需要使用 forwardRed
+    // forwardRef 也可以通过ref属性转发到另一个组件中
+    const Child_Lala = React.forwardRef((props, ref) => {
+        return <input type="text" ref={ref} {...props} />
+    });
+    function GGG_TEST() {
+        const inputEl = React.useRef(null);
+        const onBtnClick = () => {
+            inputEl.current.focus();
+        }
+        const inputEl22 = React.useRef(null);
+        const onBtnClick22 = () => {
+            console.log(inputEl22.current.value);
+        }
+
+        // 注意：React.Fragment是一个空标签
+        return(
+            <React.Fragment>
+                <div>
+                    <input type="text" ref={inputEl} />
+                    <button onClick={onBtnClick}>聚焦输入框</button>
+                </div>
+                <div>
+                    <Child_Lala ref={inputEl22} name="lala" />
+                    <button onClick={onBtnClick22}>输出输入框的值</button>
+                </div>
+            </React.Fragment>
+        );
+    }
+    function GGG() {
+        return (
+            <div>
+                <GGG_TEST></GGG_TEST>
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <GGG></GGG>,
+        document.getElementById("gg")
+    );
+
+
+    /********     useImperativeHandle    *************/
+    
+
 
 
     /********     自定义 hook    *************/
+
 
 
 
