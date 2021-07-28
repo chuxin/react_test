@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<!--    <script src="./react_16.9/react.production.min.js"></script>-->
+    <script src="./react_16.9/react.development.js"></script>
+    <script src="./react_16.9/react-dom.development.js"></script>
+    <script src="https://cdn.staticfile.org/prop-types/15.6.1/prop-types.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+<body>
+<div id="aa"></div>
+<hr/>
+
+<div id="bb"></div>
+<hr/>
+
+<div id="cc"></div>
+<br /><br /><br />
+<div id="cc22"></div>
+<br /><br /><br />
+<div id="cc33"></div>
+<hr/>
+
+<div id="dd"></div>
+<div id="dd22"></div>
+<div id="dd33"></div>
+<hr/>
+
+<div id="ee"></div>
+<br /><br /><br />
+<div id="ee22"></div>
+<hr/>
+
+<div id="ff"></div>
+<hr/>
+
+<div id="gg"></div>
+<hr/>
+
+<div id="hh"></div>
+<hr/>
+
+<script type="text/babel">
+    /********     useState    *************/
+    // 不可局部更新。如果state是一个对象，不会帮我们合并属性
+    // 地址要变。setState(obj)，如果obj地址不变，那么 React 就认为数据没有变化
+    function AAA() {
+        const [n, setN] = React.useState(0);
+        const [user, setUser] = React.useState({name: 'F'});
+        const [val, setVal] = React.useState(() => {
+            return {age: 26}
+        });
+
+        // 总结：尽可能使用函数的写法
+        const myClickEvent = () => {
+            setN(n + 1);        // 这个没效果，不确定有没有执行了
+            setN(n + 2);        // 这个执行了
+
+            // 改写成函数写法
+            setN( x => x + 3 ); // 这个执行了
+            setN( x => x + 4 ); // 这个执行了
+        }
+
+        return (
+            <div className="AAA">
+                <h3>n: {n}</h3>
+                <button onClick={myClickEvent}>累加n</button>
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <AAA></AAA>,
+        document.getElementById("aa")
+    );
+
+
+    /********     useContext    *************/
+    // 上下文是局部层面的全局变量
+    // 步骤：
+    // 使用 C = createContext( initial ) 创建上下文
+    // 使用 < C.provider >圈定作用域
+    // 在作用域内使用 useContext ( C ) 来使用上下文
+    const themes = {
+        light: {
+            foreground: "black",
+            background: "yellow"
+        },
+        dark: {
+            foreground: "white",
+            background: "blue"
+        }
+    };
+    // const MyContext = React.useContext(null);
+    const MyContext = React.createContext(themes.light);
+    function BBB() {
+        return (
+            <MyContext.Provider value={themes.dark}>
+                <ToolBar></ToolBar>
+            </MyContext.Provider>
+        );
+    }
+    function ToolBar(prop) {
+        const theme22 = React.useContext(MyContext);
+        console.log("useContext 原本的值：", theme22);
+        // 这里做了修改，子组件获取到的就是更改的值了
+        theme22.background = "green";
+        theme22.foreground = "red";
+        return (
+            <div>
+                <MyBtn></MyBtn>
+            </div>
+        );
+    }
+    function MyBtn() {
+        const theme = React.useContext(MyContext);
+        return (
+            <button style={{background: theme.background, color: theme.foreground}}>theme context</button>
+        );
+    }
+    ReactDOM.render(
+        <BBB></BBB>,
+        document.getElementById("bb")
+    );
+
+
+    /********     useReducer    *************/
+    // 步骤：
+    // 创建初始值 initialState
+    // 创建所有操作reducer(state,action)
+    // 传给useReducer，得到读和写API
+    // 调用写 ({type:'操作类型'})
+    //
+    // 总得来说useReducer是useState的复杂版
+
+    // 例子 ①  基础
+    const initial = {
+        n: 0
+    }
+    const myReducerFunc = (prevState, action) => {
+        if (action.type === "add_11") {
+            return {n: prevState.n + action.number};
+        } else if (action.type === "add_22") {
+            return {n: prevState.n + action.number};
+        } else {
+            throw new Error("unknow type 哈哈");
+        }
+    }
+    const myReducerFunc22 = (prevState22, action) => {
+        if (action.type === "add_11") {
+            return {xx: prevState22.xx + action.number};
+        } else if (action.type === "add_22") {
+            return {xx: prevState22.xx + action.number};
+        } else {
+            console.log("有错误");
+        }
+    }
+    function CCC() {
+        const [state, dispatch_11] = React.useReducer(myReducerFunc, initial);
+        const {n} = state;
+        const myClick11 = () => {
+            dispatch_11 ({
+                type: "add_11",
+                number: 1
+            });
+        }
+        const myClick22 = () => {
+            dispatch_11 ({
+                type: "add_22",
+                number: 2
+            });
+        }
+        const [state22, dispatch] = React.useReducer(myReducerFunc22, {xx: 0, yy: 3});
+        const myClick33 = () => {
+            dispatch ({
+                type: "add_11",
+                number: 1
+            });
+        }
+        const myClick44 = () => {
+            dispatch ({
+                type: "add_11",
+                number: 2
+            });
+            console.log(state22);   // Object { xx: 14 }   对象属性 yy，消失了 ？？？
+        }
+
+        return (
+            <div>
+                <h3>n: {n}</h3>
+                <button onClick={myClick11}>点击+1</button>&nbsp;&nbsp;
+                <button onClick={myClick22}>点击+2</button>
+                <h3>state22: {state22.xx}</h3>
+                <button onClick={myClick33}>点击+1</button>&nbsp;&nbsp;
+                <button onClick={myClick44}>点击+2</button>
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <CCC></CCC>,
+        document.getElementById("cc")
+    );
+
+    // 例子 ② form表单
+    const aaa = {
+        name: "",
+        age: 18,
+        nationality: "汉族"
+    };
+    const bbb = {
+        name: "啊啊啊",
+        nationality: ""
+    };
+    console.log({...aaa, ...bbb});
+
+    const initial_22 = {
+        name: "",
+        age: 18,
+        nationality: "汉族"
+    };
+    function myReducer_lala (prevState, action) {
+        switch (action.type) {
+            case "patch":
+                return {...prevState, ...action.formData};
+            case "reset":
+                return initial_22;
+            default:
+                throw new Error("错误。。。");
+        }
+    }
+    function CCC_22() {
+        const [formData, myDispatch] = React.useReducer(myReducer_lala, initial_22);
+        const mySubmit = () => {
+
+        }
+        const myPatch = (key22, value22) => {
+            myDispatch({
+                type: "patch",
+                formData: {[key22]: value22}        // 注意这里的写法，对象属性的赋值 ！！！
+            })
+        }
+        const myReset = () => {
+            myDispatch({
+                type: "reset"
+            });
+        }
+
+        return (
+            <form onSubmit={mySubmit} onReset={myReset}>
+                <div>
+                    <label>姓名：<input type="text" value={formData.name}
+                                     onInput={(e) => myDispatch ({
+                                         type: "patch",
+                                         formData: {name: e.target.value}
+                                     })} /></label>
+                </div>
+                <div>
+                    <label>年龄：<input type="text" value={formData.age}
+                                    onInput={(e) => myPatch("age", e.target.value)} /></label>
+                </div>
+                <div>
+                    <label>宗教：<input type="text" value={formData.nationality}
+                                     onInput={(e) => myDispatch ({
+                                         type: "patch",
+                                         formData: {nationality: e.target.value}
+                                     }) } /></label>
+                </div>
+                <div>
+                    <button type="submit">提交</button>
+                    <button type="reset">重置</button>
+                </div>
+                <h3>{JSON.stringify(formData)}</h3>
+            </form>
+        );
+    }
+    ReactDOM.render(
+        <CCC_22></CCC_22>,
+        document.getElementById("cc22")
+    );
+
+    // 例子 ③     如何使用 useReducer 代替 Redux
+    // 步骤：
+    // 将数据集中在一个store对象
+    // 将所有操作集中在reducer
+    // 创建一个Context
+    // 创建对数据的读写API
+    // 将第四步的内容放到第三步的Context
+    // 用Context.Provider将Context提供给所有组件
+    // 各个组件用useContext 获取读写API
+    const storeAll = {
+        user: null,
+        books: null,
+        movies: null
+    };
+    const HisContext = React.createContext(null);
+    function myReducerCC(prevState, action) {
+        if (action.type === "setUser") {
+            return {...prevState, user: action.user};       // 注意这里的写法 ！！！
+        } else if (action.type === "setBooks") {
+            return {...prevState, books: action.books};     // 注意这里的写法 ！！！
+        }
+    }
+    function CCC_33() {
+        const [state33, dispatch33] = React.useReducer(myReducerCC, storeAll);
+        const api = {state33, dispatch33};
+
+        return (
+            <HisContext.Provider value={api}>
+                <User /><br />
+                <Books /><br />
+            </HisContext.Provider>
+        );
+    }
+    function User() {
+        const {state33, dispatch33} = React.useContext(HisContext);
+        React.useEffect(() => {
+            ajax("/user").then( user => {
+                dispatch33({type: "setUser", user: user});
+            });
+        }, []);
+
+        return (
+            <div>
+                <h3>个人信息：name - {state33.user ? state33.user.name : ""}</h3>
+            </div>
+        );
+    }
+
+    function Books() {
+        const {state33, dispatch33} = React.useContext(HisContext);
+        React.useEffect(() => {
+            ajax("/books").then( books => {
+                dispatch33({type: "setBooks", books: books});
+            });
+        }, []);
+
+        return (
+            <div>
+                <h3>我的书籍：</h3>
+                <ul>
+                    {state33.books ? state33.books.map((book) => <li key={book.id}>{book.name}</li>) : "加载中。。。"}
+                </ul>
+            </div>
+        );
+    }
+
+    function ajax (path) {
+        return new Promise( (resolve, reject) => {
+            setTimeout( () => {
+                if (path === "/user") {
+                    resolve({
+                        id: 1, name: "AAA"
+                    });
+                } else if (path === "/books") {
+                    resolve ([
+                        {id: 1, name: "js高级程序设计"},
+                        {id: 2, name: "js望远镜"},
+                    ]);
+                }
+            }, 2000);
+        });
+    }
+
+    ReactDOM.render(
+        <CCC_33></CCC_33>,
+        document.getElementById("cc33")
+    );
+
+
+    /********     useEffect    *************/
+    // effect 是副作用的意思，实际上叫做 afterRender 更好一些 ，每次render 后运行，模仿生命周期函数
+    // 如果同时存在多个useEffect，会按照出现次序执行
+
+    function DDD() {
+        const [n, setN] = React.useState(0);
+        const myClick_D = function () {
+            setN( i => i + 1);
+        }
+        const [x, setX] = React.useState(0);
+        const myClick_D22 = function () {
+            setX( x => x + 1);
+        }
+
+        // 1、作为componentDidMount使用，[ ] (空数组)作第二个参数
+        const afterRender = React.useEffect;
+        afterRender(() => {
+            console.log("我这边是第一次渲染, 作为componentDidMount使用");
+        }, []);
+
+        // 2、作为componentDidUpdate使用，可指定依赖
+        const afterRender22 = React.useEffect;
+        afterRender22(() => {
+            console.log("监控 n，当 n 变化时，执行这句话 ");
+        }, [n]);
+
+        const afterRender33 = React.useEffect;
+        afterRender33(() => {
+            console.log("任何 state 变化时执行这句话");
+        });
+
+        // 3、作为componentWillUnmount使用，通过 return
+        React.useEffect(() => {
+            const id = setInterval(() => {
+                // console.log("hi guy");
+            }, 1000);
+
+            return () => {
+                window.clearInterval(id);
+            }
+        }, []);
+
+        return (
+            <div>
+                n: {n} &nbsp;&nbsp;&nbsp;
+                <button onClick={myClick_D}>点击+1</button> <br /><br />
+                x: {x} &nbsp;&nbsp;&nbsp;
+                <button onClick={myClick_D22}>点击+1</button>
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <DDD></DDD>,
+        document.getElementById("dd")
+    );
+
+    // useLayoutEffect ？？？？
+    // useEffect在浏览器渲染完成后执行，useLayoutEffect 在浏览器渲染前执行
+    // 为了用户体验，建议优先使用useEffect (优先渲染)
+
+
+    /********     memo    *************/
+    // React.PureComponent 是银               React.memo(…) 是金。
+    // React.PureComponent 是 ES6 类的组件     React.memo(...) 是函数组件
+    // React.PureComponent 优化 ES6 类组件中的重新渲染     React.memo(...) 优化函数组件中的重新渲染
+
+    // 例子①
+    // Child组件 正常调用，没有用到 React.memo 。 页面任何改动都会渲染
+    function Child(props) {
+        console.log(props.name + " 组件 页面任何改动，我都执行了");
+        return (
+            <div>n: {props.n}</div>
+        );
+    }
+    // 例子②
+    // Child22组件，用到 React.memo 。  m的值发生变化，才渲染
+    // 注意：React.memo 要写在 组件function 的外面，如果写在里面，就一直会执行，不起效果  ！！！！
+    let TestC = props => {
+        console.log(props.name + " 组件 执行了");
+        return (
+            <div>m: {props.m}</div>
+        );
+    }
+    const Child22 = React.memo(
+        TestC,
+        (prevProps, nextProps) => {
+            return prevProps.m === nextProps.m;
+        }
+    );
+    // 例子③
+    // MemodComponent组件， 用到 React.memo 。 content的值发生变化，才渲染
+    // 注意下面 useState 的特殊写法
+    const MemodComponent = React.memo(
+        props => {
+            console.log("TEST", props.content);
+            return <div>{props.content}</div>;
+        },
+        (prevProps, nextProps) => {
+            return prevProps.content === nextProps.content;
+        }
+    );
+    function EEE() {
+        const [n, setN] = React.useState(0);
+        const [m, setM] = React.useState(0);
+        const myClick = () => {
+            setN( n11 => n11+1 );
+        }
+        const myClickMM = () => {
+            setM( m11 => m11+1 );
+        }
+        // 注意这里， 初始化时没有定义变量
+        const [, setState] = React.useState();
+
+        return (
+            <div>
+                <button onClick={myClick}>update n: {n}</button> &nbsp;&nbsp;
+                <button onClick={myClickMM}>update m: {m}</button>
+                <Child n={n} name="Child"></Child>
+                <Child22 m={m} name="Child22"></Child22>
+                <button onClick={() => setState( Math.random())}>force update</button>
+                <MemodComponent content="content11" />
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <EEE></EEE>,
+        document.getElementById("ee")
+    );
+
+
+    /********     useMemo    *************/
+    // useMemo 也支持传入第二个参数，用法和 useEffect 类似
+    // 不传数组，每次更新都会重新计算
+    // 空数组，只会计算一次
+    // 依赖对应的值，当对应的值发生变化时，才会重新计算(可以依赖另外一个 useMemo 返回的值)
+    // 注意：useMemo 会在渲染的时候执行，而不是渲染之后执行，这一点和 useEffect 有区别，所以 useMemo 不建议有 副作用相关的逻辑
+
+    function FFF() {
+        const [count, setCount] = React.useState(0);
+        const [count22, setCount22] = React.useState(0);
+        const obj = {i: 0};
+        // 只要 count 一更新，下面的函数就会执行
+        const add = React.useMemo(() => {
+            console.log(obj);   // 这里obj的值永远是 {i: 0}，你得按照react的规则来操作数据， react自身有一套保存数据/操作数据的方法
+            obj.i += 1;
+            return count + 1;
+        }, [count]);
+
+        return (
+            <div>
+                <button onClick={() => setCount(count + 1)}>点击我</button><br />
+                <button onClick={() => setCount22(count22 + 1)}>点击我22</button><br />
+                <span>count点击次数：{count}</span><br />
+                <span>count22点击次数：{count22}</span><br />
+                <span>监控count后，useMemo执行次数：{add}</span><br />
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <FFF></FFF>,
+        document.getElementById("ff")
+    );
+
+
+    /********     useCallback    *************/
+    // useCallback 和 useMemo 都可缓存函数的引用或值，但从更细的使用角度来说，useCallback 缓存函数的引用，useMemo 缓存计算数据的值。
+
+
+    /********     useRef    *************/
+    // 如果你需要一个值，在组件不断 render 时保持不变
+    // 初始化:const count = useRef ( 0 )   读取 : count.current
+    // 为什么要 current ? 为了保证两次的 useRef 是同一个值(只有引用能做到)
+
+    // 由于 useRef 可以用来引用 DOM 对象，也可以用来引用普通对象，但是 props 不包括 ref，所以需要使用 forwardRed
+    // forwardRef 也可以通过ref属性转发到另一个组件中
+    const Child_Lala = React.forwardRef((props, ref) => {
+        return <input type="text" ref={ref} {...props} />
+    });
+    function GGG_TEST() {
+        const inputEl = React.useRef(null);
+        const onBtnClick = () => {
+            inputEl.current.focus();
+        }
+        const inputEl22 = React.useRef(null);
+        const onBtnClick22 = () => {
+            console.log(inputEl22.current.value);
+        }
+
+        // 注意：React.Fragment是一个空标签
+        return(
+            <React.Fragment>
+                <div>
+                    <input type="text" ref={inputEl} />
+                    <button onClick={onBtnClick}>聚焦输入框</button>
+                </div>
+                <div>
+                    <Child_Lala ref={inputEl22} name="lala" />
+                    <button onClick={onBtnClick22}>输出输入框的值</button>
+                </div>
+            </React.Fragment>
+        );
+    }
+    function GGG() {
+        return (
+            <div>
+                <GGG_TEST></GGG_TEST>
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <GGG></GGG>,
+        document.getElementById("gg")
+    );
+
+
+    /********     useImperativeHandle    *************/
+    
+
+
+
+    /********     自定义 hook    *************/
+
+
+
+
+</script>
+</body>
+</html>
