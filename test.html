@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #wrap-box{
+            width: 500px;
+            height: 500px;
+            font-size: 10px;
+            background-color: yellowgreen;
+        }
+        #inside-box{
+            width: 250px;
+            height: 250px;
+            font-size: 2em;
+            background-color: skyblue;
+        }
+    </style>
+</head>
+<body>
+adsfasdf
+<div id="wrap-box">外面的
+    <div id="inside-box">里面的</div>
+</div>
+</body>
+<script>
+  window.isMid = true;
+  if (isMid) {
+      console.log(111);
+  } else {
+      console.log(222);
+  }
+
+  function func_AAA() {
+    let aaa = 111;
+    // 定义的回调函数，如果是箭头函数，指向 当前对象
+    setTimeout(() => {
+      console.log(this);          // Object { aaa: 222 }
+      console.log(this.aaa);      // 222
+    }, 0);
+  }
+  func_AAA.call({aaa:222});
+
+  var age55 = 20;
+  let age66 = 10;
+  var person_22 = {
+    "age55": 18,
+    "age66": 8,
+    // 定义的内部函数，如果是普通函数，指向 当前对象
+    "sayHello_55": function () {
+      console.log("sayHello_55   = " + this.age55);        // sayHello_55   = 18
+      console.log("sayHello_55   = " + this.age66);        // sayHello_55   = 8
+    },
+    // 定义的内部函数，如果是箭头函数，指向 window对象
+    "sayHello_66": () => {
+      console.log("sayHello_66   = " + this.age55);        // sayHello_66   = 20
+      console.log("sayHello_66   = " + this.age66);        // sayHello_66   = undefined
+    }
+  };
+  // person_22.sayHello_55();
+  person_22.sayHello_66();
+
+  new Promise(function (resolve, reject) {
+    console.log("我被执行了 " + 11111);  // 我被执行了 11111    注意：紧跟“promise异步操作，我却先执行”，马上就执行了
+    resolve(1);
+    console.log("我被执行了 " + 22222);  // 我被执行了 22222    注意：紧跟“promise异步操作，我却先执行”，马上就执行了
+  }).then(function (value) {
+    console.log(value);             // 1        成功的情况
+    return value * 2;
+  }).then(function (value) {
+    console.log(value);             // 2        成功的情况，但是不给返回值
+  }).then(function (value) {
+    console.log(value);                     // undefined    上面不给返回值，导致传递到这里时，接收不到参数
+    return Promise.reject("reject...");     //  这边准备抛异常了
+  }).then(function (value) {
+    console.log("成功：" + value);     // 注意：这行代码没执行， 因为上面抛异常了
+  }, function(err) {
+    console.log("失败：" + err);       // 失败：reject...
+  });
+</script>
+</html>
