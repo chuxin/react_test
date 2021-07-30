@@ -169,3 +169,6 @@ drummer.instrument = "你好啊";
 console.log("多接口继承①：", drummer.age, drummer.instrument);
 var drummer22 = { age: 30, album: "月亮代表我的心" };
 console.log("多接口继承②：", drummer22.age, drummer22.album);
+// 高: 2.5cm (一片)
+// 长： > 30cm
+// 宽： > 25cm
