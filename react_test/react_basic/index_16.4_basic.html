@@ -314,6 +314,8 @@
         }
 
         handleClickParam(param) {
+            // 第一种 我是参数
+            // Object { props: {}, context: {}, refs: {}, updater: {…}, handleClickSecond: handleClickSecond(), state: {…}, handleClick: handleClick(), _reactInternalFiber: {…}, _reactInternalInstance: {…} }
             console.log('第一种', param, this);
         }
 
@@ -321,19 +323,28 @@
         handleClickParam2(param, e) {
             // 在 React 中你不能使用返回 false 的方式阻止默认行为， 你必须明确使用 preventDefault
             e.preventDefault();
+            // Proxy { <target>: {…}, <handler>: {…} }
+            // 第一种 true
+            // Object { props: {}, context: {}, refs: {}, updater: {…}, handleClickSecond: handleClickSecond(), state: {…}, handleClick: handleClick(), _reactInternalFiber: {…}, _reactInternalInstance: {…} }
             console.log(e);
             console.log('第一种', param, this);
         }
 
         handleClickSecond = () => {
+            // 这里用属性初始化器语法，绑定this :
+            // Object { props: {}, context: {}, refs: {}, updater: {…}, handleClickSecond: handleClickSecond(), state: {…}, handleClick: handleClick(), _reactInternalFiber: {…}, _reactInternalInstance: {…} }
             console.log("这里用属性初始化器语法，绑定this : " , this);
         }
 
         handleClickThird() {
+            // 这里用，回调函数中使用箭头函数，调用this：
+            // Object { props: {}, context: {}, refs: {}, updater: {…}, handleClickSecond: handleClickSecond(), state: {…}, handleClick: handleClick(), _reactInternalFiber: {…}, _reactInternalInstance: {…} }
             console.log("这里用，回调函数中使用箭头函数，调用this： " , this);
         }
 
         handleClickThirdParam(param) {
+            // 第三种 我也是参数啦
+            // Object { props: {}, context: {}, refs: {}, updater: {…}, handleClickSecond: handleClickSecond(), state: {…}, handleClick: handleClick(), _reactInternalFiber: {…}, _reactInternalInstance: {…} }
             console.log('第三种', param, this);
         }
 
@@ -359,8 +370,6 @@
                         第三种this绑定方法,带传参的
                     </button>
                     <br/><br/><br/>
-
-
                 </div>
             );
         }
