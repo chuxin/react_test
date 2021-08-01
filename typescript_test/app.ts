@@ -53,7 +53,7 @@ let tt22 = 1;      // 写法②
 // 上面两个写法等价，区别是第一种写法可以再赋值其它类型，第二种行(做了 类型推断)： 1 1
 console.log("上面两个写法等价，区别是第一种写法可以再赋值其它类型，第二种行(做了 类型推断)：", tt11, tt22);
 // tt11 = "333";
-// tt22 = "455";
+// tt22 = "455";    // error TS2322: Type 'string' is not assignable to type 'number'.
 
 let x: any = 1;
 x = "我是字符串";
@@ -91,9 +91,9 @@ function loop11(): never {
 }
 // loop11();
 
-var str = "1";
-var str2: boolean = <boolean> <any> str;    // 允许变量从一种类型更改为另一种类型
-console.log("类型断言（Type Assertion）：", str2);     // 类型断言（Type Assertion）： 1
+var str = 1;
+var str2: string = <string> <any> str;    // 允许变量从一种类型更改为另一种类型
+console.log("类型断言（Type Assertion）：", str2, typeof str2);     // 类型断言（Type Assertion）： 1 number
 
 
 /*****    变量作用域    ******/
@@ -221,6 +221,3 @@ interface DDD extends AAA, CCC {}
 var drummer22: DDD = {age: 30, album: "月亮代表我的心"};
 console.log("多接口继承②：", drummer22.age, drummer22.album);     // 多接口继承②： 30 月亮代表我的心
 
-// 高: 2.5cm (一片)
-// 长： > 30cm
-// 宽： > 25cm

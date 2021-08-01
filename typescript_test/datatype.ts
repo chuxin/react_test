@@ -126,7 +126,7 @@ for (j in nums) {
     // 3 1004
 }
 
-// 多为数组
+// 多维数组
 var multi: number[][] = [[1, 3, 6], [2, 5, 7]];
 console.log(multi[1][1]);       // 5
 console.log(multi);             // [ [ 1, 3, 6 ], [ 2, 5, 7 ] ]
