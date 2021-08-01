@@ -4,8 +4,8 @@
 // 此外还有有 SystemJs 和 Webpack。
 
 // 下面两种命令编译出的 js 文件不一样，具体没去细研究
-// 使用命令①：  tsc --module amd TestShape.ts
-// 使用命令②：  tsc --module commonjs TestShape.ts
+// 使用命令①：  tsc --module amd app3.ts
+// 使用命令②：  tsc --module commonjs app3.ts
 
 import a = require("./require_a");
 import b = require("./require_b");
@@ -13,5 +13,5 @@ import c = require("./require_c");
 function drawAllLetters2(letter: a.aaa) {
     letter.draw();
 }
-drawAllLetters2(new b.B());
-drawAllLetters2(new c.C());
+drawAllLetters2(new b.B());     // B is drawn -- require
+drawAllLetters2(new c.C());     // C is drawn -- require

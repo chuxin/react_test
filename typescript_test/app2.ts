@@ -6,13 +6,10 @@
 function drawAllLetters(letter: Drawing.aaa) {
     letter.draw();
 }
-drawAllLetters(new Drawing.B());
-drawAllLetters(new Drawing.C());
+drawAllLetters(new Drawing.B());        // B is drawn
+drawAllLetters(new Drawing.C());        // C is drawn
 
 // 命名空间嵌套命名空间
 var invoice = new Runoob.invoiceApp.Invoice();
-console.log(invoice.calculateDiscount(3));
-
-
-
+console.log(invoice.calculateDiscount(3));      // 1.2000000000000002
 
