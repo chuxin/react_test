@@ -12,26 +12,25 @@ export default class BasicRoute extends React.Component {
         return (
             <BrowserRouter>
                 <Home>
+
                     <Switch>
-                        <Route path="/home" render={
+                        <Route path="/Home" render={
                             () => (
                                 <div>
-                                    Home <Link to="/home/children">children</Link>
-                                    <Route path="/home/children" component={Children} />
+                                    Home <Link to="/Home/children">children</Link>
+                                    <Route path="/Home/children" component={Children} />
                                 </div>
                             )
                         } />
                         <Route path="/Topic" component={Topic} />
                         <Route path="/About" component={About} />
-                        <Redirect path="/" to="/home" exact />
+                        <Redirect path="/" to="/Home" exact />
                         <Route path="/TestParam/:id" component={ParamsLala} />
                         <Route component={NoMatch} />
                     </Switch>
+
                 </Home>
-                {/*<Switch>*/}
-                {/*    <Route exact path="/" component={Home} />*/}
-                {/*    <Route exact path="/details" component={Details} />*/}
-                {/*</Switch>*/}
+
             </BrowserRouter>
         );
     }

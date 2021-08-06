@@ -1,0 +1,12 @@
+
+
+BrowserRouter：是一个容器，用来放Route、Link
+Route：要展示的视图。 根据跳转过来的连接，指定组件，展示组件。
+    Route会有三大props，分别是location、history、match； 其中match又包含params、isExact、path、url这些属性。
+Link：类似于a标签，要跳转的地方
+
+
+一个Route有三种render方式
+    render方式
+    component方式，也是最常用的方式。
+    children方式
