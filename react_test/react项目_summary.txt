@@ -14,16 +14,6 @@ StrictMode 是一个用来检查项目中潜在问题的工具。它为其后代
 与 Fragment 一样，StrictMode 不会渲染任何可见的 UI。
 注意：严格模式检查仅在开发模式下运行；它们不会影响生产构建。
 
-React router 介绍：
-    react-router-dom依赖react-router，所以我们使用npm安装依赖的时候，只需要安装相应环境下的库即可，
-    不用再显式安装react-router。基于浏览器环境的开发，只需要安装react-router-dom；基于react-native环境的开发，
-    只需要安装react-router-native。npm会自动解析react-router-dom包中package.json的依赖并安装。
-react-router 核心
-react-router-dom 用于 DOM 绑定的 React Router
-react-router-native 用于 React Native 的 React Router
-react-router-redux React Router 和 Redux 的集成
-react-router-config 静态路由配置帮助助手
-
 
 
 插件安装清单：

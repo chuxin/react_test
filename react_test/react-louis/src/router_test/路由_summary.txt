@@ -1,12 +1,28 @@
+React router 介绍：
+    react-router-dom依赖react-router，所以我们使用npm安装依赖的时候，只需要安装相应环境下的库即可，
+    不用再显式安装react-router。基于浏览器环境的开发，只需要安装react-router-dom；基于react-native环境的开发，
+    只需要安装react-router-native。npm会自动解析react-router-dom包中package.json的依赖并安装。
+react-router 核心
+react-router-dom 用于 DOM 绑定的 React Router
+react-router-native 用于 React Native 的 React Router
+react-router-redux React Router 和 Redux 的集成
+react-router-config 静态路由配置帮助助手
 
 
 BrowserRouter：是一个容器，用来放Route、Link
 Route：要展示的视图。 根据跳转过来的连接，指定组件，展示组件。
     Route会有三大props，分别是location、history、match； 其中match又包含params、isExact、path、url这些属性。
 Link：类似于a标签，要跳转的地方
+Switch组件：只渲染第一个与当前访问地址匹配的<Route>或<Redirect>
+Redirect组件：重定向URL，页面由from对应的路径重定向到to对应的路径
 
 
 一个Route有三种render方式
     render方式
     component方式，也是最常用的方式。
     children方式
+
+
+
+
+
