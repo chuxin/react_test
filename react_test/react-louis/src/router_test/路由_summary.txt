@@ -10,11 +10,14 @@ react-router-config 静态路由配置帮助助手
 
 
 BrowserRouter：是一个容器，用来放Route、Link
-Route：要展示的视图。 根据跳转过来的连接，指定组件，展示组件。
-    Route会有三大props，分别是location、history、match； 其中match又包含params、isExact、path、url这些属性。
-Link：类似于a标签，要跳转的地方
-Switch组件：只渲染第一个与当前访问地址匹配的<Route>或<Redirect>
-Redirect组件：重定向URL，页面由from对应的路径重定向到to对应的路径
+    Link：类似于a标签，要跳转的地方
+    Route：要展示的视图。 根据跳转过来的连接，指定组件，展示组件。
+        Route会有三大props，分别是location、history、match； 其中match又包含params、isExact、path、url这些属性。
+    Switch组件：只渲染第一个与当前访问地址匹配的<Route>或<Redirect>
+        1、一个没有path属性的Route可以被任何的路径匹配。
+        2、Switch返回的是第一个成功匹配到的Route。
+        3、Redirect组件：重定向URL，页面由from对应的路径重定向到to对应的路径
+
 
 
 一个Route有三种render方式

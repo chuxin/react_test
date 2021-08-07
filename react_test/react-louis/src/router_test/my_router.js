@@ -26,7 +26,7 @@ export default class BasicRoute extends React.Component {
                         <Route path="/About" component={About} />
                         <Redirect path="/" to="/Home" exact />
                         <Route path="/TestParam/:id" component={ParamsLala} />
-                        <Route component={NoMatch} />
+                        {/*<Route component={NoMatch} />*/}
                     </Switch>
 
                 </Home>
