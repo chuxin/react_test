@@ -35,6 +35,7 @@ const myRoutes = [
     },
     {
         path: "/ttt/:my_user",
+        // 只有当访问地址和路由匹配时，一个 React component 才会被渲染，此时此组件接受 route props (match, location, history)
         sidebar: ({match}) => <div>{match.params.my_user}</div>,  // 为什么这里的参数是 {match}，而不是 match ？？？ 好像是因为不在标签属性里，而在内容块里
         main: ({match}) => <div>{match.params.my_user} ！！！</div>
     },
@@ -239,18 +240,6 @@ class Home extends React.Component {
                     }
                 </div>
 
-
-
-
-                <div>
-                    <br />=================  先放着   ============================
-                    <br /><br />
-                    <form>
-                        用户名：<input type="text" name="" />
-                        密码：<input type="password" name="passwd"  />
-                        {/*<button onClick={}></button>*/}
-                    </form>
-                </div>
             </div>
         );
     }
