@@ -3,3 +3,10 @@ https://www.jianshu.com/p/7de8d330cb4b
 https://zhuanlan.zhihu.com/p/106957348
 
 https://www.jianshu.com/p/4bad3633c197
+
+https://www.cnblogs.com/jpwz/p/12411804.html  详解React组件通信（父传子、子传父、兄弟组件传值）
+
+
+
+
+
