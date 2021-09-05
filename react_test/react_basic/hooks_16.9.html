@@ -34,9 +34,13 @@
 <hr/>
 
 <div id="ff"></div>
+<br /><br /><br />
+<div id="ff22"></div>
 <hr/>
 
 <div id="gg"></div>
+<br /><br /><br />
+<div id="gg22"></div>
 <hr/>
 
 <div id="hh"></div>
@@ -513,6 +517,7 @@
         const add = React.useMemo(() => {
             console.log(obj);   // 这里obj的值永远是 {i: 0}，你得按照react的规则来操作数据， react自身有一套保存数据/操作数据的方法
             obj.i += 1;
+
             return count + 1;
         }, [count]);
 
@@ -530,11 +535,44 @@
         <FFF></FFF>,
         document.getElementById("ff")
     );
-
+    // https://blog.csdn.net/ddwddw4/article/details/113867797   这个例子也写得很好
 
     /********     useCallback    *************/
     // useCallback 和 useMemo 都可缓存函数的引用或值，但从更细的使用角度来说，useCallback 缓存函数的引用，useMemo 缓存计算数据的值。
+    // 1.useMemo 计算结果是 return 回来的值, 主要用于 缓存计算结果的值 ，应用场景如： 需要 计算的状态
+    // 2.useCallback 计算结果是 函数, 主要用于 缓存函数，应用场景如: 需要缓存的函数，因为函数式组件每次任何一个 state 的变化 整个组件 都会被重新刷新，一些函数是没有必要被重新刷新的，此时就应该缓存起来，提高性能，和减少资源浪费。
+    // 注意： 不要滥用会造成性能浪费，react中减少render就能提高性能，所以这个仅仅只针对缓存能减少重复渲染时使用和缓存计算结果。
 
+    function FFF22() {
+        const [count, setCount] = React.useState(1);
+        const [val, setValue] = React.useState('');
+
+        const getNum = React.useCallback(() => {
+            return Array.from({length: count * 10}, (v, i) => {
+                console.log(v, i);
+                return i;
+            }).reduce((a, b) => a+b)
+        }, [count]);
+
+        return <div>
+            <h4>总和：{getNum()} (没做缓存，每次 input 改变时，都会重新渲染这里)</h4>
+            <Child99 getNum={getNum}></Child99>
+            <div>
+                <button onClick={() => setCount(count + 1)}>+1</button>
+                <input value={val} onChange={event => {
+                    console.log(event.target.value);
+                    return setValue(event.target.value);
+                }}/>
+            </div>
+        </div>;
+    }
+    const Child99 = React.memo(function ({ getNum }: any) {
+        return <h3>总计：{getNum()} (做缓存，每次 input 改变时，memo 判定两次地址都相同，不会重新渲染这里)</h3>
+    });
+    ReactDOM.render(
+        <FFF22></FFF22>,
+        document.getElementById("ff22")
+    );
 
     /********     useRef    *************/
     // 如果你需要一个值，在组件不断 render 时保持不变
@@ -584,14 +622,90 @@
 
 
     /********     useImperativeHandle    *************/
-    
+    // 直接转发 ref 是将 React.forwardRef 中函数上的 ref 参数直接应用在了返回元素的 ref 属性上，
+    // 其实父、子组件引用的是同一个 ref 的 current 对象，官方不建议使用这样的 ref 透传，
+    // 而使用 useImperativeHandle 后，可以让父、子组件分别有自己的 ref，通过 React.forwardRef 将父组件的 ref 透传过来，
+    // 通过 useImperativeHandle 方法来自定义开放给父组件的 current。
+    //
+    // useImperativeHandle 的第一个参数是定义 current 对象的 ref，第二个参数是一个函数，
+    // 返回值是一个对象，即这个 ref 的 current 对象，这样可以通过自定义父组件的 ref 来使用子组件 ref 的某些方法。
+    //
+    // useImperativeHandle 和 React.forwardRef 必须是配合使用的
+    const FancyInput = React.forwardRef((props, ref) => {
+        // console.log(props);
+        // console.log(ref);
+        const inputRef = React.useRef();
+        React.useImperativeHandle(ref, () => (  // 注意这里要返回一个对象 ！！！
+            {
+                focus: () => {
+                    inputRef.current.focus();
+                }
+            }
+        ));
+        return <input ref={inputRef} type="text" />;
+    });
 
+    const GGG22 = (props) => {
+        const fancyInputRef = React.useRef();
 
+        return (
+            <div>
+                <FancyInput ref={fancyInputRef} xx="111" yy="998" zz="555"></FancyInput>
+                <button onClick={() =>
+                    fancyInputRef.current.focus()
+                }>父组件调用子组件的 focus</button>
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <GGG22></GGG22>,
+        document.getElementById("gg22")
+    );
+    // 更多例子参考： https://blog.csdn.net/weixin_43720095/article/details/104967478
 
     /********     自定义 hook    *************/
-
-
-
+    function useList () {
+        const [list, setList] = React.useState(null);
+        React.useEffect( () => {
+            ajax("/list").then( list => {
+                setList(list);
+            });
+        }, []); // [] 确保只在第一次运行
+        return {
+            list: list,
+            setList: setList
+        };
+    }
+    function ajax (path) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve([
+                    {id: 1, name: "Frank11"},
+                    {id: 2, name: "Frank22"},
+                    {id: 3, name: "Frank33"},
+                    {id: 4, name: "Frank44"}
+                ]);
+            }, 4000);
+        })
+    }
+    function HHH () {
+        const {list, setList} = useList();  // 自定义的hook
+        return (
+            <div>
+                    {
+                        list ? (<ol>
+                                {list.map( (item) => {
+                                    return <li key={item.id}>{item.name}</li>
+                                })}</ol>)
+                             : ("加载中。。。")
+                    }
+            </div>
+        );
+    }
+    ReactDOM.render(
+        <HHH></HHH>,
+        document.getElementById("hh")
+    );
 
 </script>
 </body>
